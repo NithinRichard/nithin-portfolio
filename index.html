@@ -2413,6 +2413,7 @@
                 document.body.style.overflow = active ? 'hidden' : '';
             };
             hamburger.setAttribute('aria-controls', 'navLinks');
+            hamburger.setAttribute('aria-label', 'Toggle navigation');
             hamburger.setAttribute('aria-expanded', 'false');
             hamburger.addEventListener('click', toggleNav);
 
@@ -2450,6 +2451,42 @@
 
     });
     </script>
+<style>
+/* Extra mobile refinements */
+html { -webkit-text-size-adjust: 100%; }
+body { word-break: break-word; overflow-wrap: anywhere; -webkit-tap-highlight-color: transparent; }
+header { padding-top: env(safe-area-inset-top); }
+
+@media (max-width: 768px) {
+  nav { padding: 14px 0; }
+  .nav-links { max-height: calc(100dvh - 80px); overflow-y: auto; }
+  .hero { min-height: auto; }
+  .theme-toggle { right: 12px; top: 76px; }
+}
+
+@media (max-width: 640px) {
+  .container { width: 96%; padding: 0 8px; }
+  .hero-text p { font-size: 0.95rem; }
+  .btn { padding: 12px 16px; }
+  .form-control { font-size: 16px; padding: 12px 14px; }
+  .contact-form { width: 100%; max-width: none; }
+  .contact-bubble { width: 54px; height: 54px; bottom: 88px; }
+}
+
+@media (max-width: 480px) {
+  .hero-text h1 { font-size: clamp(1.6rem, 8.5vw, 2rem); }
+  .hero-buttons { gap: 10px; }
+  .logo { font-size: 1.4rem; }
+  .animated-avatar { width: min(80vw, 240px); height: min(80vw, 240px); }
+  .section-title h2 { font-size: 1.6rem; }
+  .about-text h3 { font-size: 1.25rem; }
+}
+
+@media (max-width: 360px) {
+  .hero { padding-top: 96px; }
+  .theme-toggle { display: none; }
+}
+</style>
 <style>
 /* Command palette */
 .cmdk-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.55); -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%); z-index: 2000; display: none; }
