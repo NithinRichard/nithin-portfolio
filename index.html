@@ -1520,8 +1520,8 @@
         /* Contact Form Bubble */
         .contact-bubble {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: calc(30px + env(safe-area-inset-bottom));
+            right: calc(30px + env(safe-area-inset-right));
             width: 60px;
             height: 60px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1531,7 +1531,7 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
+            z-index: 4000;
             transition: all 0.3s ease;
             animation: pulse 2s infinite, floating 3s ease-in-out infinite;
         }
@@ -2016,7 +2016,7 @@
         @media (max-width: 768px) {
             .mobile-dock { display: inline-flex; }
             .mobile-dock .dock-btn span { display: none; }
-            .contact-bubble { bottom: 90px; }
+            .contact-bubble { bottom: calc(90px + env(safe-area-inset-bottom)); }
         }
         @media (min-width: 769px) {
             .mobile-dock { display: none; }
@@ -2475,7 +2475,7 @@ header { padding-top: env(safe-area-inset-top); }
   .btn { padding: 12px 16px; }
   .form-control { font-size: 16px; padding: 12px 14px; }
   .contact-form { width: 100%; max-width: none; }
-  .contact-bubble { width: 54px; height: 54px; bottom: 88px; }
+  .contact-bubble { width: 54px; height: 54px; bottom: calc(88px + env(safe-area-inset-bottom)); }
 }
 
 @media (max-width: 480px) {
@@ -2712,7 +2712,7 @@ document.addEventListener('DOMContentLoaded', function(){
         <a class="dock-btn" href="tel:+919846208479" aria-label="Call">
             <i class="fas fa-phone"></i><span>Call</span>
         </a>
-        <a class="dock-btn" href="https://wa.me/1234567890" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <a class="dock-btn" href="https://wa.me/919846208479" target="_blank" rel="noopener" aria-label="WhatsApp">
             <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
         </a>
         <a class="dock-btn" href="mailto:nithinrichard1@gmail.com" aria-label="Email">
