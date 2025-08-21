@@ -24,6 +24,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="preload" href="emoji.png" as="image" fetchpriority="high">
+    <link rel="stylesheet" href="css/enhanced-styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
     <style>
         :root {
             --primary: #818cf8;
@@ -1552,10 +1555,15 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 4000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.5);
+            z-index: 9999;
             transition: all 0.3s ease;
-            animation: pulse 2s infinite, floating 3s ease-in-out infinite;
+            animation: pulse 2s infinite, floating 3s ease-in-out infinite, glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(99, 102, 241, 0.5); }
+            50% { box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.8); }
         }
 
         .contact-bubble:hover {
@@ -2237,27 +2245,33 @@
         @media (max-width: 768px) {
             .nav-links {
                 position: fixed;
-                inset: 0;
                 top: 0;
+                left: 0;
                 width: 100%;
-                height: 100dvh;
+                height: 100vh;
                 background: var(--nav-bg);
                 backdrop-filter: blur(20px);
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
                 padding: 80px 0 24px;
-                gap: 20px;
+                gap: 30px;
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                transform: translateY(-100%);
-                transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
                 pointer-events: none;
                 z-index: 2500;
                 overflow-y: auto;
             }
 
             .nav-links.active {
-                transform: translateY(0);
+                transform: translateX(0);
                 pointer-events: auto;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+                padding: 15px 20px;
             }
 
             .hamburger {
@@ -2830,14 +2844,14 @@ document.addEventListener('DOMContentLoaded', function(){
                         <span>Available for new projects • Local time: <span id="local-time">--:--</span></span>
                     </div>
                     <div class="hero-buttons">
-                        <a href="https://calendly.com/nithinrichard1/30min" id="scheduleCallBtn" class="btn btn-primary" target="_blank" rel="noopener" onclick="try{ if(window.Calendly && Calendly.initPopupWidget){ Calendly.initPopupWidget({ url: window.CALENDLY_URL || 'https://calendly.com/nithinrichard1/30min' }); return false; } }catch(e){}">Schedule a Call</a>
+                        <button id="scheduleCallBtn" class="btn btn-primary" onclick="openCalendlyPopup()">Schedule a Call</button>
                         <a href="#projects" class="btn btn-outline">View Case Studies</a>
                         <a href="mailto:nithinrichard1@gmail.com" class="btn btn-outline">Email Me</a>
                     </div>
                 </div>
                 <div class="hero-image">
                     <div class="hero-shape"></div>
-                    <!-- ReadyPlayerMe 3D Character Container -->
+                    <!-- Character Container -->
                     <div id="rpm-character-container" class="gradient-border" style="width: 400px; height: 400px; position: relative; margin: 0 auto; overflow: hidden; border-radius: 50%;">
                         <img src="emoji.png" alt="Nithin Richard avatar" width="400" height="400" fetchpriority="high" decoding="async">
                     </div>
@@ -2978,32 +2992,24 @@ document.addEventListener('DOMContentLoaded', function(){
                     <!-- Experience Item 1 -->
                     <div class="experience-item" style="margin-bottom: 30px; padding: 25px; background: var(--card-bg); border-radius: 15px; backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Senior Full Stack Developer</h4>
-                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">2020 - Present</span>
+                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Software Developer</h4>
+                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">May 2025 - Present</span>
                         </div>
-                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Tech Innovations Inc.</h5>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Led development of scalable web applications using React, Node.js, and MongoDB. Managed a team of 5 developers and implemented CI/CD pipelines that reduced deployment time by 60%.</p>
+                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Hodo Medical Informatics</h5>
+                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Developing healthcare software solutions and medical information systems. Working with modern web technologies to build scalable applications for the healthcare industry.</p>
                     </div>
                     
                     <!-- Experience Item 2 -->
                     <div class="experience-item" style="margin-bottom: 30px; padding: 25px; background: var(--card-bg); border-radius: 15px; backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Frontend Developer</h4>
-                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">2018 - 2020</span>
+                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Python Full Stack Development Intern</h4>
+                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">Nov 2024 - May 2025</span>
                         </div>
-                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Digital Solutions LLC</h5>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Developed responsive web applications using Vue.js and Angular. Collaborated with UX designers to implement pixel-perfect interfaces and improved page load speed by 40%.</p>
+                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Luminar Techno Lab</h5>
+                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Gained hands-on experience in developing full-stack web applications using Python, Django, HTML, CSS, and Bootstrap. Built dynamic and responsive web applications with modern development practices.</p>
                     </div>
                     
-                    <!-- Experience Item 3 -->
-                    <div class="experience-item" style="padding: 25px; background: var(--card-bg); border-radius: 15px; backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid var(--border-color);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Junior Web Developer</h4>
-                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">2016 - 2018</span>
-                        </div>
-                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">WebCraft Studios</h5>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Built and maintained client websites using HTML, CSS, and JavaScript. Implemented responsive designs and optimized SEO, resulting in 30% increase in organic traffic for clients.</p>
-                    </div>
+
                 </div>
                 
                 <!-- Education -->
@@ -3016,21 +3022,21 @@ document.addEventListener('DOMContentLoaded', function(){
                     <!-- Education Item 1 -->
                     <div class="education-item" style="margin-bottom: 30px; padding: 25px; background: var(--card-bg); border-radius: 15px; backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">MSc in Computer Science</h4>
-                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">2014 - 2016</span>
+                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Bachelor of Technology in Computer Science & Engineering</h4>
+                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">Nov 2020 - May 2024</span>
                         </div>
-                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Stanford University</h5>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Specialized in Artificial Intelligence and Machine Learning. Completed thesis on "Neural Networks in Image Recognition" with a focus on convolutional neural networks.</p>
+                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">APJ Abdul Kalam University</h5>
+                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Graduated with CGPA: 7.1. Specialized in software development, algorithms, and computer science fundamentals. Led the college team to victory in inter-college football competition.</p>
                     </div>
                     
                     <!-- Education Item 2 -->
                     <div class="education-item" style="padding: 25px; background: var(--card-bg); border-radius: 15px; backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid var(--border-color);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">BSc in Software Engineering</h4>
-                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">2010 - 2014</span>
+                            <h4 style="font-size: 1.3rem; color: var(--text-primary); margin: 0;">Higher Secondary Education</h4>
+                            <span style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border: 1px solid rgba(99, 102, 241, 0.2);">Mar 2018 - May 2020</span>
                         </div>
-                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">MIT</h5>
-                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Graduated with honors. Focused on web development and database systems. Led a team project to develop a real-time collaboration platform for students.</p>
+                        <h5 style="color: var(--primary); margin: 0 0 15px 0; font-size: 1.1rem;">Jyothi Nilayam Higher Secondary School</h5>
+                        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">Completed Higher Secondary Education with HSE: 84% and SSLC: 97%. Strong foundation in mathematics and science subjects that led to pursuing computer science engineering.</p>
                     </div>
                 </div>
             </div>
@@ -3049,16 +3055,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     <h3><i class="fas fa-laptop-code"></i> Frontend Development</h3>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>HTML/CSS</span>
-                            <span>95%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="95%"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-name">
-                            <span>JavaScript</span>
+                            <span>HTML</span>
                             <span>90%</span>
                         </div>
                         <div class="skill-bar">
@@ -3067,7 +3064,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>React</span>
+                            <span>CSS</span>
                             <span>85%</span>
                         </div>
                         <div class="skill-bar">
@@ -3076,11 +3073,20 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>Vue.js</span>
+                            <span>Bootstrap</span>
                             <span>80%</span>
                         </div>
                         <div class="skill-bar">
                             <div class="skill-progress" data-width="80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>React.js</span>
+                            <span>75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="75%"></div>
                         </div>
                     </div>
                 </div>
@@ -3088,7 +3094,16 @@ document.addEventListener('DOMContentLoaded', function(){
                     <h3><i class="fas fa-server"></i> Backend Development</h3>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>Node.js</span>
+                            <span>Python</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Django</span>
                             <span>85%</span>
                         </div>
                         <div class="skill-bar">
@@ -3097,16 +3112,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>Express.js</span>
-                            <span>80%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress" data-width="80%"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item">
-                        <div class="skill-name">
-                            <span>Python</span>
+                            <span>PHP</span>
                             <span>75%</span>
                         </div>
                         <div class="skill-bar">
@@ -3115,7 +3121,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>PHP</span>
+                            <span>CodeIgniter</span>
                             <span>70%</span>
                         </div>
                         <div class="skill-bar">
@@ -3127,7 +3133,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     <h3><i class="fas fa-database"></i> Database & Others</h3>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>MongoDB</span>
+                            <span>MySQL</span>
                             <span>85%</span>
                         </div>
                         <div class="skill-bar">
@@ -3136,7 +3142,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>MySQL</span>
+                            <span>Git & GitHub</span>
                             <span>80%</span>
                         </div>
                         <div class="skill-bar">
@@ -3145,7 +3151,7 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>Git & GitHub</span>
+                            <span>Problem Solving</span>
                             <span>90%</span>
                         </div>
                         <div class="skill-bar">
@@ -3154,7 +3160,46 @@ document.addEventListener('DOMContentLoaded', function(){
                     </div>
                     <div class="skill-item">
                         <div class="skill-name">
-                            <span>Docker</span>
+                            <span>Communication</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="85%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="skill-card floating" style="animation-delay: 1.5s">
+                    <h3><i class="fas fa-robot"></i> AI Coding Tools</h3>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Amazon Q Developer</span>
+                            <span>90%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="90%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Windsurf</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="85%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Cursor IDE</span>
+                            <span>80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress" data-width="80%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-name">
+                            <span>Tabnine</span>
                             <span>75%</span>
                         </div>
                         <div class="skill-bar">
@@ -3239,115 +3284,91 @@ document.addEventListener('DOMContentLoaded', function(){
             <div class="projects-container">
                 <div class="project-card scroll-rotate">
                     <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="E-commerce Platform">
+                        <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Hospital Management System">
                     </div>
                     <div class="project-info">
-                        <h3 class="project-title">E-commerce Platform</h3>
-                        <p class="cs-summary">Context: a DTC brand needed a scalable storefront. Problem: slow TTFB and low conversion. Constraints: 6‑week deadline before campaign launch.</p>
+                        <h3 class="project-title">Hospital Management System</h3>
+                        <p class="cs-summary">Developed a comprehensive hospital management dashboard with role-based access control for Admin, Doctor, and Receptionist users.</p>
                         <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Full‑stack</span></div>
-                            <div><span class="label">Stack</span><span class="value">Django, PostgreSQL, Next.js</span></div>
-                            <div><span class="label">Timeline</span><span class="value">6 weeks</span></div>
+                            <div><span class="label">Role</span><span class="value">Full‑stack Developer</span></div>
+                            <div><span class="label">Stack</span><span class="value">PHP, CodeIgniter, MySQL</span></div>
+                            <div><span class="label">Type</span><span class="value">Healthcare Management</span></div>
                         </div>
                         <ul class="cs-metrics">
-                            <li><strong>-40% TTFB</strong> with server caching and edge SSR</li>
-                            <li><strong>+18% conversion</strong> from performance + UX fixes</li>
-                            <li><strong>99.9% uptime</strong> over promo period</li>
+                            <li><strong>Role-based access</strong> for 3 user types</li>
+                            <li><strong>Complete dashboard</strong> with patient management</li>
+                            <li><strong>Secure authentication</strong> and data protection</li>
                         </ul>
-                        <ul class="cs-metrics">
-                            <li><strong>+32% conversion</strong> after launch vs. baseline</li>
-                            <li><strong>-43% TTFB</strong> through SSR and edge caching</li>
-                            <li><strong>99.9% uptime</strong> over first quarter</li>
-                        </ul>
-                        <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Full‑stack</span></div>
-                            <div><span class="label">Timeline</span><span class="value">6 weeks</span></div>
-                            <div><span class="label">Scope</span><span class="value">Storefront, Checkout, Admin</span></div>
-                        </div>
                         <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Node.js</span>
-                            <span class="tag">MongoDB</span>
-                            <span class="tag">Stripe</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#"><i class="fas fa-file-alt"></i> Case Summary</a>
-                            <a href="#"><i class="fab fa-github"></i> GitHub</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card scroll-rotate">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80" alt="Task Management App">
-                    </div>
-                    <div class="project-info">
-                        <h3 class="project-title">Task Management App</h3>
-                        <p class="cs-summary">Context: startup needed a real‑time team task board. Problem: sync conflicts and UX friction. Constraints: incremental rollout with zero downtime.</p>
-                        <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Backend + Frontend</span></div>
-                            <div><span class="label">Stack</span><span class="value">FastAPI, Redis, React</span></div>
-                            <div><span class="label">Release</span><span class="value">Phased</span></div>
-                        </div>
-                        <ul class="cs-metrics">
-                            <li><strong>-50% p95 latency</strong> using websockets + caching</li>
-                            <li><strong>0 sync conflicts</strong> post CRDT-based merge</li>
-                            <li><strong>+22% DAU retention</strong> after UX improvements</li>
-                        </ul>
-                        <ul class="cs-metrics">
-                            <li><strong>Realtime sync</strong> across 1k+ concurrent sessions</li>
-                            <li><strong>-28% churn</strong> after UX improvements</li>
-                            <li><strong>Sub‑100ms</strong> perceived drag latency</li>
-                        </ul>
-                        <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Frontend</span></div>
-                            <div><span class="label">Timeline</span><span class="value">8 weeks</span></div>
-                            <div><span class="label">Scope</span><span class="value">Realtime Kanban, Presence</span></div>
-                        </div>
-                        <div class="project-tags">
-                            <span class="tag">Vue.js</span>
-                            <span class="tag">Firebase</span>
-                            <span class="tag">Vuetify</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#"><i class="fas fa-file-alt"></i> Case Summary</a>
-                            <a href="#"><i class="fab fa-github"></i> GitHub</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card scroll-rotate">
-                    <div class="project-image">
-                        <img src="https://images.unsplash.com/photo-1559028006-44a36f1143d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Weather Dashboard">
-                    </div>
-                    <div class="project-info">
-                        <h3 class="project-title">Weather Dashboard</h3>
-                        <p class="cs-summary">Context: public utility needed a fast, mobile‑first weather dashboard. Problem: heavy client bundle and rate‑limited APIs.</p>
-                        <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Frontend</span></div>
-                            <div><span class="label">Stack</span><span class="value">Vite, vanilla JS, Cloudflare</span></div>
-                            <div><span class="label">Scope</span><span class="value">PWA</span></div>
-                        </div>
-                        <ul class="cs-metrics">
-                            <li><strong>-60% bundle size</strong> via code splitting + tree-shaking</li>
-                            <li><strong>p95 &lt; 1.2s</strong> on 4G thanks to caching strategy</li>
-                            <li><strong>+35</strong> Lighthouse Performance points</li>
-                        </ul>
-                        <ul class="cs-metrics">
-                            <li><strong>95+ Lighthouse</strong> Perf/Best Practices</li>
-                            <li><strong>~1.6s LCP</strong> on mid‑range mobile</li>
-                            <li><strong>0.00 CLS</strong> via careful layout containment</li>
-                        </ul>
-                        <div class="cs-meta">
-                            <div><span class="label">Role</span><span class="value">Frontend</span></div>
-                            <div><span class="label">Timeline</span><span class="value">3 weeks</span></div>
-                            <div><span class="label">Scope</span><span class="value">Data Viz, Caching</span></div>
-                        </div>
-                        <div class="project-tags">
+                            <span class="tag">PHP</span>
+                            <span class="tag">CodeIgniter</span>
+                            <span class="tag">MySQL</span>
+                            <span class="tag">Bootstrap</span>
                             <span class="tag">JavaScript</span>
-                            <span class="tag">API Integration</span>
-                            <span class="tag">Chart.js</span>
                         </div>
                         <div class="project-links">
-                            <a href="#"><i class="fas fa-file-alt"></i> Case Summary</a>
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card scroll-rotate">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1559028006-44a36f1143d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Underwater Image Enhancement">
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Underwater Image Enhancement</h3>
+                        <p class="cs-summary">A web-based application using Discrete Cosine Transform for enhancement of underwater images with advanced image processing algorithms.</p>
+                        <div class="cs-meta">
+                            <div><span class="label">Role</span><span class="value">Developer & Researcher</span></div>
+                            <div><span class="label">Stack</span><span class="value">Web Technologies, DCT</span></div>
+                            <div><span class="label">Type</span><span class="value">Image Processing</span></div>
+                        </div>
+                        <ul class="cs-metrics">
+                            <li><strong>DCT Algorithm</strong> for image enhancement</li>
+                            <li><strong>Web-based interface</strong> for easy access</li>
+                            <li><strong>Real-time processing</strong> of underwater images</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">Image Processing</span>
+                            <span class="tag">DCT</span>
+                            <span class="tag">Web Application</span>
+                            <span class="tag">JavaScript</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
+                            <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card scroll-rotate">
+                    <div class="project-image">
+                        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Plant Shop Website">
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Plant Shop E-Commerce Website</h3>
+                        <p class="cs-summary">Built and deployed a fully functional plant e-commerce website using Python Django for backend and Windsurf for frontend styling with AI tools integration.</p>
+                        <div class="cs-meta">
+                            <div><span class="label">Role</span><span class="value">Full‑stack Developer</span></div>
+                            <div><span class="label">Stack</span><span class="value">Python, Django, Windsurf</span></div>
+                            <div><span class="label">Type</span><span class="value">E-Commerce</span></div>
+                        </div>
+                        <ul class="cs-metrics">
+                            <li><strong>Full e-commerce</strong> functionality</li>
+                            <li><strong>AI Tools integration</strong> for enhanced UX</li>
+                            <li><strong>Responsive design</strong> with modern styling</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Django</span>
+                            <span class="tag">Windsurf</span>
+                            <span class="tag">HTML</span>
+                            <span class="tag">CSS</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">AI Tools</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#"><i class="fas fa-external-link-alt"></i> Live Demo</a>
                             <a href="#"><i class="fab fa-github"></i> GitHub</a>
                         </div>
                     </div>
@@ -3439,10 +3460,7 @@ document.addEventListener('DOMContentLoaded', function(){
             </div>
         </div>
         
-        <!-- Contact Form Bubble -->
-        <div class="contact-bubble" id="contactBubble">
-            <i class="fas fa-envelope"></i>
-        </div>
+
         
         <!-- Contact Form Popup -->
         <div class="contact-form-popup" id="contactFormPopup">
@@ -3471,6 +3489,11 @@ document.addEventListener('DOMContentLoaded', function(){
                 <button type="submit" class="btn btn-primary">Send Message</button>
                 <div id="formMessage" class="form-message"></div>
             </form>
+        </div>
+        
+        <!-- Contact Form Bubble -->
+        <div class="contact-bubble" id="contactBubble">
+            <i class="fas fa-envelope"></i>
         </div>
     </section>
 
@@ -3528,6 +3551,16 @@ document.addEventListener('DOMContentLoaded', function(){
     </footer>
 
     <script>
+        // Test Calendly loading
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                console.log('Calendly loaded:', !!window.Calendly);
+                if (window.Calendly) {
+                    console.log('Calendly methods available:', Object.keys(window.Calendly));
+                }
+            }, 2000);
+        });
+        
         // Create particles for background
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
@@ -3577,18 +3610,22 @@ document.addEventListener('DOMContentLoaded', function(){
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
 
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-
-        // Close mobile menu when clicking on a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                hamburger.classList.remove('active');
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+                console.log('Menu toggled:', navLinks.classList.contains('active'));
             });
-        });
+
+            // Close mobile menu when clicking on a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    hamburger.classList.remove('active');
+                });
+            });
+        }
 
         // Sticky Header with 3D effect
         window.addEventListener('scroll', () => {
@@ -3757,202 +3794,31 @@ document.addEventListener('DOMContentLoaded', function(){
         }
 
         // Contact Form Bubble Functionality
-        const contactBubble = document.getElementById('contactBubble');
-        const contactFormPopup = document.getElementById('contactFormPopup');
-        const closeForm = document.getElementById('closeForm');
-
-        contactBubble.addEventListener('click', () => {
-            contactFormPopup.classList.add('active');
-        });
-
-        closeForm.addEventListener('click', () => {
-            contactFormPopup.classList.remove('active');
-        });
-
-        // Close form when clicking outside
         document.addEventListener('click', (e) => {
-            if (!contactFormPopup.contains(e.target) && 
-                e.target !== contactBubble && 
-                !contactBubble.contains(e.target)) {
-                contactFormPopup.classList.remove('active');
+            if (e.target.closest('.contact-bubble')) {
+                document.getElementById('contactFormPopup').classList.add('active');
+            }
+            if (e.target.id === 'closeForm') {
+                document.getElementById('contactFormPopup').classList.remove('active');
             }
         });
+
+        // Calendly popup function
+        window.openCalendlyPopup = function() {
+            // Force new tab for desktop to avoid popup blockers
+            window.open('https://calendly.com/nithinrichard1/30min', '_blank', 'noopener,noreferrer');
+            
+            // Track the event
+            if (window.analytics && window.analytics.track) {
+                window.analytics.track('Schedule Call Clicked', { source: 'hero_button' });
+            }
+        };
 
         // Character Movement
         window.addEventListener('scroll', () => {
             // No movement for character in hero section
         });
-                // Initialize ReadyPlayerMe 3D Character
-        function initRPMCharacter() {
-            // Check if Three.js is loaded
-            if (typeof THREE === 'undefined') {
-                console.error('Three.js is not loaded');
-                return;
-            }
-
-            // Create scene
-            const scene = new THREE.Scene();
-            scene.background = null; // Transparent background
-
-            // Create camera - positioned to show upper body with larger framing
-            const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000);
-            camera.position.set(0, 1.7, 2.0); // Closer to make character appear larger
-
-            // Create renderer
-            const renderer = new THREE.WebGLRenderer({ 
-                alpha: true,  // Transparent background
-                antialias: true  // Smooth edges
-            });
-            renderer.setSize(400, 400); // Match container size
-            renderer.setClearColor(0x000000, 0); // Transparent background
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            document.getElementById('rpm-character-container').appendChild(renderer.domElement);
-
-            // Add lighting for realistic effect
-            // Ambient light
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            // Key light (main front light)
-            const keyLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            keyLight.position.set(2, 3, 3);
-            keyLight.castShadow = true;
-            keyLight.shadow.mapSize.width = 1024;
-            keyLight.shadow.mapSize.height = 1024;
-            scene.add(keyLight);
-
-            // Fill light (softer light from the side)
-            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
-            fillLight.position.set(-3, 2, 1);
-            scene.add(fillLight);
-
-            // Rim light (back light for edge definition)
-            const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            rimLight.position.set(0, 3, -3);
-            scene.add(rimLight);
-
-            // Create a subtle ground shadow
-            const shadowGeometry = new THREE.CircleGeometry(1.5, 32);
-            const shadowMaterial = new THREE.MeshBasicMaterial({
-                color: 0x999999,
-                transparent: true,
-                opacity: 0.3
-            });
-            const shadow = new THREE.Mesh(shadowGeometry, shadowMaterial);
-            shadow.rotation.x = -Math.PI / 2;
-            shadow.position.y = 0.01;
-            scene.add(shadow);
-
-            // Variables to hold model and animations
-            let model, mixer, animations = [];
-            
-            // Load ReadyPlayerMe character
-            const loader = new THREE.GLTFLoader();
-            loader.load('https://models.readyplayer.me/68a43e83459c01cb65ec23a9.glb', 
-                function(gltf) {
-                    model = gltf.scene;
-                    model.scale.set(1.2, 1.2, 1.2); // Increased scale to make character larger
-                    model.position.setY(0);
-                    model.traverse(function(node) {
-                        if (node.isMesh) {
-                            node.castShadow = true;
-                            node.receiveShadow = true;
-                        }
-                    });
-                    scene.add(model);
-                    
-                    // Center the model
-                    const box = new THREE.Box3().setFromObject(model);
-                    const center = box.getCenter(new THREE.Vector3());
-                    model.position.x = -center.x;
-                    model.position.y = -box.min.y + 0.5; // Adjust to show upper body
-                    model.position.z = -center.z;
-                    
-                    // Set up animation mixer if animations exist
-                    if (gltf.animations && gltf.animations.length > 0) {
-                        mixer = new THREE.AnimationMixer(model);
-                        animations = gltf.animations;
-                        
-                        // Play the first animation (usually idle/waving)
-                        const action = mixer.clipAction(animations[0]);
-                        action.play();
-                    }
-                },
-                undefined,
-                function(error) {
-                    console.error('Error loading ReadyPlayerMe character:', error);
-                    // Fallback: Show error message
-                    const container = document.getElementById('rpm-character-container');
-                    container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #f8f9fa, #e9ecef);border-radius:20px;font-weight:600;color:#495057;">Character Loading Failed</div>';
-                }
-            );
-
-            // Clock for animation timing
-            const clock = new THREE.Clock();
-            
-            // Floating animation variables
-            let floatOffset = 0;
-            
-            // Animation loop
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                // Update animation mixer
-                if (mixer) {
-                    mixer.update(clock.getDelta());
-                }
-                
-                // Add floating effect to the model
-                if (model) {
-                    floatOffset += 0.02;
-                    model.position.y = Math.sin(floatOffset) * 0.05 - 0.5; // Adjust for upper body view
-                }
-                
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                renderer.setSize(400, 400);
-                camera.aspect = 1;
-                camera.updateProjectionMatrix();
-            });
-        }
-
-        // Load Three.js and GLTFLoader, then initialize character
-        function loadThreeJSAndCharacter() {
-            // Load Three.js
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-            script.onload = function() {
-                console.log('Three.js loaded successfully');
-                
-                // Load GLTFLoader
-                const loaderScript = document.createElement('script');
-                loaderScript.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js';
-                loaderScript.onload = function() {
-                    console.log('GLTFLoader loaded successfully');
-                    initRPMCharacter();
-                };
-                loaderScript.onerror = function() {
-                    console.error('Failed to load GLTFLoader');
-                    const container = document.getElementById('rpm-character-container');
-                    container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #f8f9fa, #e9ecef);border-radius:20px;font-weight:600;color:#495057;">Model Loader Failed</div>';
-                };
-                document.head.appendChild(loaderScript);
-            };
-            script.onerror = function() {
-                console.error('Failed to load Three.js');
-                const container = document.getElementById('rpm-character-container');
-                container.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, #f8f9fa, #e9ecef);border-radius:20px;font-weight:600;color:#495057;">3D Engine Failed</div>';
-            };
-            document.head.appendChild(script);
-        }
-
-        // Initialize 3D character when page loads
-        window.addEventListener('load', loadThreeJSAndCharacter);
+        // Character will be initialized by interactive-character.js
     </script>
 <script>
 (function(){
@@ -4121,5 +3987,8 @@ document.addEventListener('DOMContentLoaded', function(){
   } catch(e) {}
 })();
 </script>
+<script src="js/analytics-tracker.js"></script>
+<script src="js/smart-contact.js"></script>
+<script src="js/project-showcase.js"></script>
 </body>
 </html>
